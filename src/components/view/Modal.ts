@@ -1,6 +1,6 @@
 import { Component } from '../base/Component';
 import { ensureElement } from '../../utils/utils';
-import { EventEmitter } from '../base/events';
+import { IEvents } from '../base/events';
 
 interface IModalView {
 	content: HTMLElement;
@@ -10,8 +10,10 @@ export class Modal extends Component<IModalView> {
 	protected _closeButton: HTMLButtonElement;
 	protected _content: HTMLElement;
 
-	constructor(container: HTMLElement, protected events: EventEmitter) {
+	constructor(container: HTMLElement, protected events: IEvents) {
 		super(container);
+
+		console.log({ 'events': events });
 
 		this._closeButton = ensureElement<HTMLButtonElement>(
 			'.modal__close',

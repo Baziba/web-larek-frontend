@@ -1,7 +1,7 @@
 /**
  * Карточка товара получаема с сервера
  */
-export interface IProduct {
+export type TProduct = {
 	id: string;
 	description: string;
 	image: string;
@@ -18,7 +18,7 @@ export type PayMethod = 'online' | 'offline';
 /**
  * Данные формы контактов
  */
-export interface IContactsForm {
+export type TContactsForm = {
 	email?: string;
 	phone?: string;
 }
@@ -26,7 +26,7 @@ export interface IContactsForm {
 /**
  * Данные формы с адресом и типом оплаты
  */
-export interface IOrderForm {
+export type TOrderForm = {
 	address?: string;
 	payment?: PayMethod;
 }
@@ -34,7 +34,7 @@ export interface IOrderForm {
 /**
  * Данные для отправки заказа на сервер
  */
-export interface IOrder extends IOrderForm, IContactsForm {
+export type TOrder = TOrderForm & TContactsForm & {
 	items?: string[]
 	total?: number;
 }
@@ -42,14 +42,14 @@ export interface IOrder extends IOrderForm, IContactsForm {
 /**
  * Перечень ошибок форм
  */
-export type FormErrors = Partial<Record<keyof IOrder, string>>;
+export type FormErrors = Partial<Record<keyof TOrder, string>>;
 
-export interface IOrderResult {
+export type TOrderResult = {
 	id: string;
 	total: number;
 }
 
-export interface IBasket {
+export type TBasket = {
 	items: string[];
 	total?: number;
 }

@@ -1,9 +1,9 @@
 import { Form } from "./Form";
-import { IOrderForm, PayMethod } from "../../types";
+import { TOrderForm, PayMethod } from "../../types";
 import { EventEmitter, IEvents } from "../base/events";
 import { ensureElement } from "../../utils/utils";
 
-export class OrderForm extends Form<IOrderForm> {
+export class OrderForm extends Form<TOrderForm> {
     private _typeCash: HTMLButtonElement;
     private _typeCard: HTMLButtonElement;
 

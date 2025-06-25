@@ -1,20 +1,20 @@
 import { Component } from '../base/Component';
 import { createElement, ensureElement, formatNumber } from '../../utils/utils';
-import { EventEmitter } from '../base/events';
+import { IEvents } from '../base/events';
 
-interface IBasketView {
+interface TBasketView {
 	items: HTMLElement[];
 	total: number;
 	button: string[];
 	locked: boolean;
 }
 
-export class Basket extends Component<IBasketView> {
+export class Basket extends Component<TBasketView> {
 	protected _items: HTMLElement;
 	protected _total: HTMLElement;
 	protected _button: HTMLElement;
 
-	constructor(container: HTMLElement, protected events: EventEmitter) {
+	constructor(container: HTMLElement, protected events: IEvents) {
 		super(container);
 
 		this._items = ensureElement<HTMLElement>('.basket__list', this.container);

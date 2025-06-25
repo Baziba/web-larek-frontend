@@ -1,5 +1,5 @@
 import { Model } from '../base/Model';
-import { FormErrors, IBasket, IContactsForm, IOrder, IOrderForm, IProduct, PayMethod } from '../../types';
+import { FormErrors, TBasket, TContactsForm, TOrder, TOrderForm, TProduct, PayMethod } from '../../types';
 import { CatalogItem } from './CatalogItem';
 
 /**
@@ -7,20 +7,20 @@ import { CatalogItem } from './CatalogItem';
  */
 export interface IAppModel {
 	items: CatalogItem[];	// Список товаров полученный с сервера
-	basket: IBasket;		// Корзина товаров
+	basket: TBasket;		// Корзина товаров
 	preview: string | null;	// Выбранный товар
-	order: IOrder | null;	// Содержимое заказа
+	order: TOrder | null;	// Содержимое заказа
 	formErrors: FormErrors;	// Ошибки валидации форм
 }
 
 export class App extends Model<IAppModel> implements IAppModel {
 	items: CatalogItem[];
-	basket: IBasket = {
+	basket: TBasket = {
 		items: [],
 		total: 0,
 	};
 	preview: string | null;
-	order: IOrder = {
+	order: TOrder = {
 		phone: null,
 		email: null,
 		payment: null,
@@ -30,7 +30,7 @@ export class App extends Model<IAppModel> implements IAppModel {
 	};
 	formErrors: FormErrors = {};
 
-	setCatalog(products: IProduct[]) {
+	setCatalog(products: TProduct[]) {
 		this.items = products.map((product) => new CatalogItem(product, this.events));
 		this.emitChanges('catalog:update', { catalog: this.items });
 	}
@@ -40,21 +40,26 @@ export class App extends Model<IAppModel> implements IAppModel {
 		this.emitChanges('preview:changed', item);
 	}
 
-	addToBasket(item: IProduct) {
+	addToBasket(item: CatalogItem) {
 		if (!this.basket.items.includes(item.id)) {
 			this.basket.items.push(item.id)
 		};
-
 		this.emitChanges('preview:changed', item);
 		this.emitChanges('basket:changed', item);
 	}
 
-	removeFromBasket(item: IProduct) {
+	removeFromBasket(item: CatalogItem) {
 		this.basket.items = this.basket.items.filter(i => i !== item.id);
 		this.emitChanges('basket:changed', item);
 	}
 
-	setOrderField(field: keyof IOrderForm, value: string) {
+	removeFromCard(item: CatalogItem) {
+		this.basket.items = this.basket.items.filter(i => i !== item.id);
+		this.emitChanges('preview:changed', item);
+		this.emitChanges('basket:changed', item);
+	}
+
+	setOrderField(field: keyof TOrderForm, value: string) {
 		if (field === 'payment') {
 			this.setOrderPayment(value);
 		} else {
@@ -66,7 +71,7 @@ export class App extends Model<IAppModel> implements IAppModel {
 		}
 	}
 
-	setContactsField(field: keyof IContactsForm, value: string) {
+	setContactsField(field: keyof TContactsForm, value: string) {
 		this.order[field] = value;
 
 		if (this.validateContacts()) {

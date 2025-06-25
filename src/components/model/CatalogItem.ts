@@ -1,13 +1,14 @@
-import { IProduct } from "../../types";
+import { TProduct } from "../../types";
 import { Model } from "../base/Model";
 
-export class CatalogItem extends Model<IProduct> {
+export class CatalogItem extends Model<TProduct> {
     id: string;
     description: string;
     image: string;
     title: string;
     category: string;
     price: number | null;
+    inBasket: boolean;
 
     get categoryClass(): string {
         const categoryClass = new Map([
@@ -20,4 +21,6 @@ export class CatalogItem extends Model<IProduct> {
 
         return categoryClass.get(this.category);
     }
+
+    
 }

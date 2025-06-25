@@ -87,6 +87,6 @@ export class Card<T> extends Component<ICardView> {
     }
 
     set available(value: boolean) {
-        this.setText(this._button, value ? 'В корзину' : 'Купить');
+        this.setText(this._button, value ? 'Удалить' : 'Купить');
     }
 }

@@ -1,13 +1,13 @@
 import { Api, ApiListResponse } from './base/api';
-import { IOrder, IOrderResult, IProduct } from './../types';
+import { TOrder, TOrderResult, TProduct } from './../types';
 
 /**
  * Модель взаимдоействия с Api
  */
 export interface ILarekApiModel {
-	getProduct: (id: string) => Promise<IProduct>;
-	getProductList: () => Promise<IProduct[]>;
-	placeOrder: (order: IOrder) => Promise<IOrderResult>;
+	getProduct: (id: string) => Promise<TProduct>;
+	getProductList: () => Promise<TProduct[]>;
+	placeOrder: (order: TOrder) => Promise<TOrderResult>;
 }
 
 export class LarekApi extends Api implements ILarekApiModel {
@@ -18,15 +18,15 @@ export class LarekApi extends Api implements ILarekApiModel {
 		this.cdn = cdn;
 	}
 
-	getProduct(id: string): Promise<IProduct> {
-		return this.get(`/product/${id}`).then((item: IProduct) => ({
+	getProduct(id: string): Promise<TProduct> {
+		return this.get(`/product/${id}`).then((item: TProduct) => ({
 			...item,
 			image: this.cdn + item.image.replace('.svg', '.png'),
 		}));
 	}
 
-	getProductList(): Promise<IProduct[]> {
-		return this.get('/product').then((response: ApiListResponse<IProduct>) =>
+	getProductList(): Promise<TProduct[]> {
+		return this.get('/product').then((response: ApiListResponse<TProduct>) =>
 			response.items.map((item) => ({
 				...item,
 				image: this.cdn + item.image.replace('.svg', '.png'),
@@ -34,9 +34,9 @@ export class LarekApi extends Api implements ILarekApiModel {
 		);
 	}
 
-	placeOrder(order: IOrder): Promise<IOrderResult> {
+	placeOrder(order: TOrder): Promise<TOrderResult> {
 		return this.post('/order', order).then(
-			(response: IOrderResult) => response
+			(response: TOrderResult) => response
 		);
 	}
 }

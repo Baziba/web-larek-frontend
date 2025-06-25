@@ -1,4 +1,4 @@
-import { IOrderResult } from '../../types';
+import { TOrderResult } from '../../types';
 import { ensureElement } from '../../utils/utils';
 import { Component } from '../base/Component';
 
@@ -6,7 +6,7 @@ interface ISuccessActions {
 	onClick: (event: MouseEvent) => void;
 }
 
-export class Success extends Component<IOrderResult> {
+export class Success extends Component<TOrderResult> {
 	protected _total: HTMLElement;
 	protected _close: HTMLButtonElement;
 

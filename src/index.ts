@@ -11,7 +11,7 @@ import { Modal } from './components/view/Modal';
 import { Basket } from './components/view/Basket';
 import { Card } from './components/view/Card';
 import { OrderForm } from './components/view/OrderForm';
-import { IProduct, IContactsForm, IOrderForm, IOrder, IOrderResult } from './types';
+import { TProduct, TContactsForm, TOrderForm, TOrder, TOrderResult } from './types';
 import { ContactsForm } from './components/view/ContactsForm';
 import { Success } from './components/view/Success';
 
@@ -55,8 +55,7 @@ events.on('catalog:update', () => {
 			image: item.image,
 			category: item.category,
 			price: item.price,
-			categoryClass: item.categoryClass,
-			available: true
+			categoryClass: item.categoryClass
 		});
 	});
 });
@@ -72,11 +71,10 @@ events.on('card:select', (item: CatalogItem) => {
  * Открытие модального окна с товаром
  */
 events.on('preview:changed', (item: CatalogItem) => {
-	console.log(item);
 	const inBasket = app.basket.items.includes(item.id);
 	const card = new Card('card', cloneTemplate(previewTemplate), {
 		onClick: () => {
-			events.emit(`basket:${inBasket ? 'open' : 'add'}`, item);
+			events.emit(`${inBasket ? 'card:remove' : 'basket:add'}`, item);
 		},
 	});
 	modal.render({
@@ -97,6 +95,7 @@ events.on('preview:changed', (item: CatalogItem) => {
  */
 events.on('basket:open', () => {
 	basket.locked = app.basket.items.length === 0;
+	basket.total = app.basket.total;
 	modal.render({
 		content: basket.render({})
 	});
@@ -105,15 +104,19 @@ events.on('basket:open', () => {
 /**
  * Добавляем товар в корзину
  */
-events.on('basket:add', (item: IProduct) => {
+events.on('basket:add', (item: CatalogItem) => {
 	app.addToBasket(item);
 });
 
 /**
  * Удаляем товар из корзины
  */
-events.on('basket:remove', (item: IProduct) => {
+events.on('basket:remove', (item: CatalogItem) => {
 	app.removeFromBasket(item);
+});
+
+events.on('card:remove', (item: CatalogItem) => {
+	app.removeFromCard(item);
 });
 
 /**
@@ -136,6 +139,7 @@ events.on('basket:changed', () => {
 
 	app.basket.total = total;
 	basket.locked = app.basket.items.length === 0;
+	basket.total = app.basket.total;
 	page.counter = app.basket.items.length;
 
 });
@@ -155,14 +159,14 @@ events.on('order:open', () => {
 /**
  * Изменения в полях формы заказа
  */
-events.on(/^order\..*:change/, (data: { field: keyof IOrderForm, value: string }) => {
+events.on(/^order\..*:change/, (data: { field: keyof TOrderForm, value: string }) => {
 	app.setOrderField(data.field, data.value);
 });
 
 /**
  * Изменилось состояние валидации формы заказа
  */
-events.on('order:validate', (errors: Partial<IOrder>) => {
+events.on('order:validate', (errors: Partial<TOrder>) => {
 	const { address, payment } = errors;
 	order.valid = !address && !payment;
 	order.errors = Object.values({ address, payment }).filter(i => !!i).join('; ');
@@ -185,14 +189,14 @@ events.on('order:submit', () => {
 /**
  * Изменения в полях формы контактов
  */
-events.on(/^contacts\..*:change/, (data: { field: keyof IContactsForm, value: string }) => {
+events.on(/^contacts\..*:change/, (data: { field: keyof TContactsForm, value: string }) => {
 	app.setContactsField(data.field, data.value);
 });
 
 /**
  * Изменилось состояние валидации формы контактов
  */
-events.on('contacts:validate', (errors: Partial<IOrder>) => {
+events.on('contacts:validate', (errors: Partial<TOrder>) => {
 	const { email, phone } = errors;
 	contacts.valid = !email && !phone;
 	contacts.errors = Object.values({ email, phone }).filter(i => !!i).join('; ');
@@ -203,7 +207,7 @@ events.on('contacts:validate', (errors: Partial<IOrder>) => {
  */
 events.on('contacts:submit', () => {
 	api.placeOrder(app.order)
-		.then((result: IOrderResult) => {
+		.then((result: TOrderResult) => {
 			app.clearBasket();
 			const success = new Success('order-success', cloneTemplate(successTemplate), {
 				onClick: () => { modal.close(); },
