@@ -1,136 +1,55 @@
-import { ApiPostMethods } from "../components/base/api";
-
 /**
- * Тип данных: Карточка
+ * Карточка товара получаема с сервера
  */
 export interface IProduct {
-  id: string;
-  description: string;
-  image: string;
-  title: string;
-  category: TProductCategory;
-  price: number | null;
-}
-
-/**
- * Тип данных: Корзина
- */
-export interface ICart {
-  total: number
-  items: string[];
-}
-
-/**
- * Тип данных: Данные заказа
- */
-export interface IOrder {
-  payment: TPayMethod;
-  address: string;
-  email: string;
-  phone: string;
-  total: number;
-  items: string[];
+	id: string;
+	description: string;
+	image: string;
+	title: string;
+	category: string;
+	price: number | null;
 }
 
 /**
  * Строгий тип оплаты
  */
-export type TPayMethod = 'online' | 'offline';
+export type PayMethod = 'online' | 'offline';
 
 /**
- * Строгий тип категории товара
+ * Данные формы контактов
  */
-export type TProductCategory = 'софт-скил' | 'другое' | 'дополнительное' | 'кнопка' | 'хард-скил';
-
-/**
- * Товар для модального окна корзины
- */
-export type TProductInCart = Pick<IProduct, 'title' | 'price'>;
-
-/** Количество в иконке корзины буду выводлить считая количество товаров в корзине */
-export type TCartMini = Pick<ICart, 'items'>;
-
-/**
- * Интерфейс базового класса Api
- */
-export interface Api {
-  baseUrl: string;
-  options: RequestInit;
-  handleResponse(response: Response): Promise<object>
-  get(uri: string): Promise<object>;
-  post(uri: string, data: object, method: ApiPostMethods): Promise<object>;
+export interface IContactsForm {
+	email?: string;
+	phone?: string;
 }
 
 /**
- * Перечень товаров от Api
+ * Данные формы с адресом и типом оплаты
  */
-export interface IApiProductList {
-  total: number;
-  items: IProduct[];
+export interface IOrderForm {
+	address?: string;
+	payment?: PayMethod;
 }
 
 /**
- * Ответ Api на заказ
+ * Данные для отправки заказа на сервер
  */
-export interface IApiOrder {
-  id: string;
-  total: number;
+export interface IOrder extends IOrderForm, IContactsForm {
+	items?: string[]
+	total?: number;
 }
 
 /**
- * Модель списка карточек
+ * Перечень ошибок форм
  */
-export interface IProductList {
-  items: string[];
-  preview: string | null;
-  getProduct(items: string[]): IProduct;
-  getProducts(): IProduct[];
+export type FormErrors = Partial<Record<keyof IOrder, string>>;
+
+export interface IOrderResult {
+	id: string;
+	total: number;
 }
 
-/**
- * Модель корзины
- */
-export interface ICartModel {
-  items: string[];
-  addProduct(id: string): void;
-  removeProduct(id: string): void;
-  emptyCart(): void;
-  getTotal(items: string[]): number;
-  getCount(items: string[]): number;
-}
-
-/**
- * Модель заказа
- */
-export interface IOrderModel {
-  items: string[];
-  payment: TPayMethod;
-  address: string;
-  email: string;
-  phone: string;
-  total: number;
-}
-
-/**
- * Отображает карточку товара
- */
-export interface IProductView {
-  container: HTMLElement;
-  render: HTMLElement;
-}
-
-/**
- * Отображает список карточек товара
- */
-export interface IProductListView {
-  container: HTMLElement;
-  setProductCards: HTMLElement[];
-  render: HTMLElement;
-}
-
-/**
- * Отображает корзину
- */
-export interface ICartView {
-
+export interface IBasket {
+	items: string[];
+	total?: number;
 }
