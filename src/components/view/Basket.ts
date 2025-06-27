@@ -48,12 +48,8 @@ export class Basket extends Component<TBasketView> {
 		this.setText(this._total, formatNumber(total) + ' синапсов');
 	}
 
-	set locked(value: boolean) {
-		if (value) {
-			this.setDisabled(this._button, true);
-		} else {
-			this.setDisabled(this._button, false);
-		}
+	set toggleButton(value: boolean) {
+		this.setDisabled(this._button, value);
 	}
 
 }

@@ -37,26 +37,26 @@ export class App extends Model<IAppModel> implements IAppModel {
 
 	setPreview(item: CatalogItem) {
 		this.preview = item.id;
-		this.emitChanges('preview:changed', item);
+		this.emitChanges('preview:change', item);
 	}
 
 	addToBasket(item: CatalogItem) {
 		if (!this.basket.items.includes(item.id)) {
 			this.basket.items.push(item.id)
 		};
-		this.emitChanges('preview:changed', item);
-		this.emitChanges('basket:changed', item);
+		this.emitChanges('preview:change', item);
+		this.emitChanges('basket:change', item);
 	}
 
 	removeFromBasket(item: CatalogItem) {
 		this.basket.items = this.basket.items.filter(i => i !== item.id);
-		this.emitChanges('basket:changed', item);
+		this.emitChanges('basket:change', item);
 	}
 
 	removeFromCard(item: CatalogItem) {
 		this.basket.items = this.basket.items.filter(i => i !== item.id);
-		this.emitChanges('preview:changed', item);
-		this.emitChanges('basket:changed', item);
+		this.emitChanges('preview:change', item);
+		this.emitChanges('basket:change', item);
 	}
 
 	setOrderField(field: keyof TOrderForm, value: string) {
@@ -132,7 +132,7 @@ export class App extends Model<IAppModel> implements IAppModel {
 	clearBasket() {
 		this.basket.items = [];
 		this.basket.total = 0;
-		this.events.emit('basket:changed', this.basket);
+		this.events.emit('basket:change', this.basket);
 	}
 
 }

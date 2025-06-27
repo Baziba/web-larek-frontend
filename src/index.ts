@@ -70,7 +70,7 @@ events.on('card:select', (item: CatalogItem) => {
 /**
  * Открытие модального окна с товаром
  */
-events.on('preview:changed', (item: CatalogItem) => {
+events.on('preview:change', (item: CatalogItem) => {
 	const inBasket = app.basket.items.includes(item.id);
 	const card = new Card('card', cloneTemplate(previewTemplate), {
 		onClick: () => {
@@ -94,7 +94,7 @@ events.on('preview:changed', (item: CatalogItem) => {
  * Открытие модального окна с корзиной
  */
 events.on('basket:open', () => {
-	basket.locked = app.basket.items.length === 0;
+	basket.toggleButton = app.basket.items.length === 0;
 	basket.total = app.basket.total;
 	modal.render({
 		content: basket.render({})
@@ -122,9 +122,11 @@ events.on('card:remove', (item: CatalogItem) => {
 /**
  * Обработка измений корзины
  */
-events.on('basket:changed', () => {
+events.on('basket:change', () => {
 	let total = 0;
 	basket.items = app.basket.items.map((id, index) => {
+		console.log({ index });
+
 		const item = app.items.find((item) => item.id === id);
 		total += item.price;
 		const card = new Card('card', cloneTemplate(cardBasketTemplate), {
@@ -138,7 +140,7 @@ events.on('basket:changed', () => {
 	});
 
 	app.basket.total = total;
-	basket.locked = app.basket.items.length === 0;
+	basket.toggleButton = app.basket.items.length === 0;
 	basket.total = app.basket.total;
 	page.counter = app.basket.items.length;
 
@@ -217,7 +219,7 @@ events.on('contacts:submit', () => {
 				content: success.render(),
 			});
 		})
-		.catch((err) => console.error(err));
+		.catch(console.error);
 });
 
 events.on('modal:open', () => {
@@ -244,5 +246,5 @@ events.on('modal:close', () => {
 api
 	.getProductList()
 	.then(app.setCatalog.bind(app))
-	.catch((err) => console.error(err));
+	.catch(console.error);
 

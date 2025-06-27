@@ -45,7 +45,7 @@ npm run build
 yarn build
 ```
 
-## Архитектура
+## Об архитектуре
 
 Для реализации проекта использован паттерн проектирования MVP.
 
@@ -55,7 +55,7 @@ yarn build
 
 **Presenter** - Презенер, связывает между собой вид и модель в реагируя на действия пользователя.
 
-Действия пользователя отслеживает `EventEmitter` - брокер событий.
+Взаимодействия внутри приложения происходят через события. Модели инициализируют события, слушатели событий в основном коде выполняют передачу данных компонентам отображения, а также вычислениями между этой передачей, и еще они меняют значения в моделях.
 
 ## Базовый код
 
@@ -65,7 +65,18 @@ yarn build
 
 _Конструктор_:
 
-- `container: HTMLElement` - DOM контейнер элемента
+Конструктор получает один параметр `container: HTMLElement` - DOM контейнер типа HTMLElement и записывет его значение в защищенноей свойство `container`, доступное только для чтения.
+
+_Методы_:
+
+- `toggleClass(element: HTMLElement, className: string, force?: boolean)` - Переключает класс
+- `setText(element: HTMLElement, value: unknown)` - Установить текстовое содержимое
+- `setDisabled(element: HTMLElement, state: boolean)` - Сменить статус блокировки
+- `setHidden(element: HTMLElement)` - Скрыть
+- `setVisible(element: HTMLElement)` - Показать
+- `setImage(element: HTMLImageElement, src: string, alt?: string)` - Установить изображение с алтернативным текстом
+- `addClass(element: HTMLElement, tokens: string)` - Добавить класс
+- `render(data?: Partial<T>): HTMLElement` - Вернуть корневой DOM-элемент
 
 ### Api
 
@@ -73,25 +84,34 @@ _Конструктор_:
 
 _Конструктор_:
 
-- `baseUrl` - Url адрес для запроса
-- `options`- Параметры запроса
+Получает два параметра:
+
+- `baseUrl:string` - строка с адресом для запроса и записывает её значение в публичное свойство `baseUrl`, доступное только для чтения.
+
+- `options:RequestInit` - объект с настройками типа RequestInit, помещается в одноимённое свойство.
 
 _Методы_:
 
-- `get` - отправляет `GET` запрос и возвращает `Promise<object>`
-- `post` - отправляет `POST` запрос с данными
+- `get(uri: string)` - отправляет `GET` запрос на `uri` и возвращает `Promise<object>`
+- `post(uri: string, data: object, method: ('POST' | 'PUT' | 'DELETE') )` - отправляет запрос типа `method` на `uri` с данными объека `data`
+- `handleResponse(response: Response)` - приватная функция обработки ответа на запрос. Возвраящает `Promise<object>`
 
 ### EventEmitter
 
 Реализует паттерн «Наблюдатель» и позволяет подписываться на события и уведомлять подписчиков о наступлении события.
 
-_Конструктор_ записывает в свойство `_events` экземпляр объекта Map для хранения перечень событий и подписчиков
+_Конструктор_
+
+Записывает в свойство `_events` экземпляр объекта Map для хранения перечень событий и подписчиков.
 
 _Методы_:
 
-- `on` — Установить обработчик на событие
-- `emit` — Инициировать событие с данными
-- `trigger` - Сделать коллбек триггер, генерирующий событие при вызове
+- `on<T extends object>(eventName: EventName, callback: (event: T) => void)` — Установить обработчик на событие
+- `off(eventName: EventName, callback: Subscriber)` — Снять обработчик с события
+- `emit<T extends object>(eventName: string, data?: T)` - Инициировать событие с данными
+- `onAll(callback: (event: EmitterEvent) => void)` - Слушать все события
+- `offAll()` - Сбросить все события
+- `trigger<T extends object>(eventName: string, context?: Partial<T>)` - Сделать коллбек триггер, генерирующий событие при вызове
 
 ## Основные типы данных
 

@@ -72,10 +72,13 @@ export class Card<T> extends Component<ICardView> {
     }
 
     set price(value: number) {
+
         this.setText(
             this._price,
             value ? `${value.toString()} синапсов` : 'Бесценно'
         );
+
+        this.setDisabled(this._button, value === null);
     }
 
     set category(value: string) {
@@ -83,10 +86,14 @@ export class Card<T> extends Component<ICardView> {
     }
 
     set categoryClass(value: string) {
-        this.addClass(this._category, `card__category_${value}`);
+        this.toggleClass(this._category, `card__category_${value}`);
     }
 
     set available(value: boolean) {
         this.setText(this._button, value ? 'Удалить' : 'Купить');
+    }
+
+    set index(value: number) {
+        this.setText(this._index, value);
     }
 }
